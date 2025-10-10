@@ -1,0 +1,28 @@
+from flask import Flask, request, jsonify
+import json
+from datetime import datetime
+
+app = Flask(__name__)
+
+@app.route("/webhook", methods=["POST"])
+def github_webhook():
+    data = request.get_json()
+
+    # Muestra un pequeño mensaje en la terminal
+    print("📦 Webhook recibido y guardado en archivo.")
+
+    # Guarda el JSON recibido en un archivo de texto
+    with open("webhook_log.txt", "a", encoding="utf-8") as f:
+        f.write("\n\n--- Webhook recibido ---\n")
+        f.write(f"Fecha: {datetime.now()}\n")
+        f.write(json.dumps(data, indent=4, ensure_ascii=False))
+        f.write("\n--------------------------\n")
+
+    # Ejemplo opcional: detectar un push
+    if "pusher" in data:
+        print(f"🚀 Push realizado por: {data['pusher']['name']}")
+
+    return jsonify({"status": "success"}), 200
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
