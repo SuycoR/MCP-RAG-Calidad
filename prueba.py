@@ -26,10 +26,12 @@ def github_webhook():
     # Ejemplo opcional: detectar un push
     if "pusher" in data:
         print(f"🚀 Push realizado por: {data['pusher']['name']}")
-        
+       
     commits = data.get("commits", [])
     resultados = []
-    
+    if not commits:
+        return jsonify({"status": "no commits found"}), 400
+        
     for commit in commits:
         mensaje = str(commit)
         respuesta = enviarMensaje(chat, mensaje)
