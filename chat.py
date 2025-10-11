@@ -7,11 +7,17 @@ from langchain.chains import ConversationChain
 #Utilitario para crear la memoria a corto plazo del modelo
 from langchain.memory import ConversationBufferMemory
 
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
+# Leer variables del entorno
+CONF_API_VERSION = os.getenv("CONF_API_VERSION")
+CONF_AZURE_ENDPOINT = os.getenv("CONF_AZURE_ENDPOINT")
+CONF_AZURE_API_KEY = os.getenv("CONF_AZURE_API_KEY")
+CONF_AZURE_DEPLOYMENT = os.getenv("CONF_AZURE_DEPLOYMENT")
 
-model_name = "gpt-5-nano"
-deployment = CONF_AZURE_DEPLOYMENT
 
 def obtenerModelo():
     #Conectamos modelito
