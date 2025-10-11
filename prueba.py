@@ -1,8 +1,13 @@
 from flask import Flask, request, jsonify
 import json
+from chat import obtenerModelo, abrirSesionChat, enviarMensaje
 from datetime import datetime
 
 app = Flask(__name__)
+
+llm = obtenerModelo()
+contexto = "Eres un auditor que clasifica commits en tres categorías: vago, ambiguo o documentado. Analiza los archivos modificados y la descripción."
+chat = abrirSesionChat(llm, contexto)
 
 @app.route("/webhook", methods=["POST"])
 def github_webhook():
@@ -21,8 +26,16 @@ def github_webhook():
     # Ejemplo opcional: detectar un push
     if "pusher" in data:
         print(f"🚀 Push realizado por: {data['pusher']['name']}")
+        
+    commits = data.get("commits", [])
+    resultados = []
+    
+    for commit in commits:
+        mensaje = str(commit)
+        respuesta = enviarMensaje(chat, mensaje)
+        resultados.append({"commit": commit, "evaluacion": respuesta})
 
-    return jsonify({"status": "success"}), 200
+    return jsonify({"status": "ok","resultados":resultados}), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
